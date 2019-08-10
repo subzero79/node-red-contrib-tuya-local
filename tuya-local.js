@@ -1,23 +1,19 @@
 const TuyaDev = require('tuyapi');
+const {keyRename,getHumanTimeStamp,checkValidJSON} = require('./lib/utils');
+
 module.exports = function(RED) {
 	
-	var interval = 15000
 
-	function getHumanTimeStamp() {
-		return new Date().toLocaleTimeString( 'en-US',{
-			hour12: false
-		});
-	}
 
 	function TuyaNode(config) {
 		RED.nodes.createNode(this,config);
 		var node = this;
-		console.log(config.devName)
 		this.Name = config.devName;
 		this.Id = config.devId;
 		this.Key = config.devKey;
 		this.Ip = config.devIp;
 		this.version = config.protocolVer;
+		this.renameSchema = config.renameSchema;
 		const dev_info =  {name:this.Name,ip:this.Ip,id:this.Id};
 		const device = new TuyaDev({
 			id: this.Id,
@@ -52,7 +48,7 @@ module.exports = function(RED) {
 					node.status({fill:"green",shape:"dot",text: 'set success at:' + getHumanTimeStamp()});
 				}, (reason) => {
 					node.status({fill:"red",shape:"dot",text: 'set state failed:' + reason});
-				});	
+				});
 			} else if ( "dps" in req ) {
 				console.log(req)
 				device.set(req);
@@ -87,7 +83,11 @@ module.exports = function(RED) {
 
 		device.on('data', (data,commandByte) => {
 			if ("commandByte" !== null ) {
-				dev_info.available = true
+				dev_info.available = true;
+				if (this.renameSchema != undefined ) {
+					schemaObj =  JSON.parse(this.renameSchema)
+					data.dps = checkValidJSON(this.renameSchema) ? keyRename(data.dps,schemaObj) : data.dps;
+				}
 				msg = {data:dev_info,commandByte:commandByte,payload:data};
 				node.send(msg);
 			}
