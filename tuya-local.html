@@ -1,0 +1,91 @@
+<script type="text/javascript">
+	RED.nodes.registerType("tuya-local", {
+		category: "input",
+		defaults: {
+			devName:		{ value: "", required: true},
+			devIp:			{ value: "", required: true},
+			devId:			{ value: "", required: true },
+			devKey:			{ value: "", required: true},
+			protocolVer:	{ value: "3.3", required: true},
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "tuya1.png",
+		color: "#ba0000",
+		label: function() {
+			return this.devName || this.devIp || "tuya-local";
+		}
+	});
+</script>
+<!--  -->
+<script type="text/x-red" data-template-name="tuya-local">
+	<div class="form-row">
+		<label for="node-input-devName"><i class="icon-tag"></i> Device name</label>
+		<input type="text" id="node-input-devName" placeholder="Node name">
+	</div>
+	<div class="form-row">
+		<label for="node-input-devIp"><i class="fa fa-server"></i>IP Address</label>
+		<input type="text" id="node-input-devIp" placeholder="10.10.6.180">
+	</div>
+	<div class="form-row">
+		<label for="node-input-devId"><i class="fa fa-id-badge"></i>ID</label>
+		<input type="text" id="node-input-devId" placeholder="82180808c44f33a6743a">
+	</div>
+	<div class="form-row">
+		<label for="node-input-devKey"><i class="fa fa-key"></i>Key</label>
+		<input type="text" id="node-input-devKey" placeholder="acb2ad7c747d1dac">
+	</div>
+	<div class="form-row">
+		<label for="node-input-protocolVer"><i class="fa fa-list-ul"></i> Version</label>
+		<input type="text" id="node-input-protocolVer" placeholder="">
+	</div>
+</script>
+
+<script type="text/x-red" data-help-name="tuya-local">
+	<p>Connects to a Tuya device via active tcp socket using tuyapi library. 
+	Can receive commands to control and send status update in real time</p>
+	<h3>Config</h3>
+	<dl class="message-properties">
+	    <dt>Name<span class="optional">string</span></dt>
+	    <dd>Name to show in NodeRED</dd>
+	    <dt class="property-type">IP address<span class="property-type">string</span></dt>
+	    <dd>IP address or hostname of the device</dd>
+	    <dt class="property-type">Device ID<span class="property-type">string</span></dt>
+	    <dd>Device ID obtained for the device</dd>
+	    <dt class="property-type">Device key<span class="property-type">string</span></dt>
+	    <dd>Device local key obtained for the device</dd>
+	    <dt class="property-type">Version<span class="property-type">string</span></dt>
+	    <dd>Tuya protocol version</dd>
+	</dl>
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+
+	    <dt class="optional">
+	      payload <span class="property-type">boolean</span>
+	    </dt>
+        <dd>Changes the state dps['1'] to msg.payload</dd>
+	    <dt class="optional">
+	      payload <span class="property-type">JSON</span>
+	    </dt>
+        <dd>Change a specific dps property or multiple ones.</dd>
+        <dd>ex: {"set": true|false,"dps": 2} </dd>
+        <dd>ex: {"multiple":true,"data":{1:true,3:false }} </dd>
+	    <dt class="optional">
+	      payload <span class="property-type">string</span>
+	    </dt>
+        <dd><b>connect </b> Connect the device</dd>
+        <dd><b>disconnect </b> Disconnect the device</dd>
+        <dd><b>toggle </b> Toggle the state of dps['1']</dd>
+        <dd><b>request </b> Request the state of the device, this includes all properties</dd>
+	</dl>
+	<h3>Output</h3>
+	<dl class="message-properties">
+		<code>msg.payload</code> constains the state report of the device.</p>
+		<code>msg.commandByte</code>Integer representing the commandByte of the result
+		(e.g. 7=requested response, 8=proactive update from device), more info on different
+		values <a href="https://github.com/codetheweb/tuyapi/blob/c72cda1238068d496a7d4017275d3d3d0c8c29c8/lib/message-parser.js#L12-L45">here</a></p>
+		<code>msg.data</code> constains the device information including the key "available"
+		which is true if the device is online, false otherwise</p>
+	</dl>
+	
+</script>

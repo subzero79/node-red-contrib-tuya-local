@@ -1,0 +1,19 @@
+{
+  "name": "node-red-contrib-tuya-local",
+  "version": "1.0.0",
+  "description": "",
+  "main": "tuya-local.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+	"node-red" : {
+        "nodes": {
+            "tuya": "tuya-local.js"
+        }
+    },
+  "dependencies": {
+    "tuyapi": "5.1.2"
+  }
+}
