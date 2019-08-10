@@ -15,7 +15,7 @@ This packages is not yet published to npm so it has to be installed manually.
 ```shell
 docker exec -it ${nodered-container-name} bash
 cd /data
-npm install subzero79/subzero79/node-red-contrib-tuya-local
+npm install subzero79/node-red-contrib-tuya-local
 exit
 docker restart ${nodered-container-name}
 ```
@@ -25,7 +25,7 @@ docker restart ${nodered-container-name}
 ```shell
 . path/to/nodered/environment/bin/activate
 cd ~/.node-red/
-npm install subzero79/subzero79/node-red-contrib-tuya-local
+npm install subzero79/node-red-contrib-tuya-local
 ```
 
 
