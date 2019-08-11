@@ -82,9 +82,8 @@ module.exports = function(RED) {
 		device.on('data', (data,commandByte) => {
 			if ("commandByte" !== null ) {
 				dev_info.available = true;
-				if (this.renameSchema != undefined ) {
-					schemaObj =  JSON.parse(this.renameSchema)
-					data.dps = checkValidJSON(this.renameSchema) ? keyRename(data.dps,schemaObj) : data.dps;
+				if (this.renameSchema === undefined || this.renameSchema === null) {
+					data.dps = checkValidJSON(this.renameSchema) ? keyRename(data.dps,JSON.parse(this.renameSchema)) : data.dps;
 				}
 				msg = {data:dev_info,commandByte:commandByte,payload:data};
 				node.send(msg);
