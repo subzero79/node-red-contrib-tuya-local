@@ -2,8 +2,6 @@ const TuyaDev = require('tuyapi');
 const {keyRename,getHumanTimeStamp,checkValidJSON} = require('./lib/utils');
 
 module.exports = function(RED) {
-	
-
 
 	function TuyaNode(config) {
 		RED.nodes.createNode(this,config);
