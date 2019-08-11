@@ -1,8 +1,6 @@
 const TuyaDev = require('tuyapi');
 module.exports = function(RED) {
 	
-	var interval = 15000
-
 	function getHumanTimeStamp() {
 		return new Date().toLocaleTimeString( 'en-US',{
 			hour12: false
@@ -52,7 +50,7 @@ module.exports = function(RED) {
 					node.status({fill:"green",shape:"dot",text: 'set success at:' + getHumanTimeStamp()});
 				}, (reason) => {
 					node.status({fill:"red",shape:"dot",text: 'set state failed:' + reason});
-				});	
+				});
 			} else if ( "dps" in req ) {
 				console.log(req)
 				device.set(req);
