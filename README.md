@@ -53,6 +53,6 @@ To update the node run the same steps above.
 
 ## About the node
 
-The node connects to the devices via tcp socket using the tuyapi library. Tuyapi keeps the connection alive and is in charge of encrypting the commands and decrypting the received status from the device. This node in particular tries to connect constantly to the device, it will keep retrying even if the the flow is disabled, you need to remove the node to stop trying to connect to the device.
+The node connects to the devices via tcp socket using the tuyapi library. Tuyapi keeps the connection alive and is in charge of encrypting the commands and decrypting the received status from the device. This node in particular tries to connect constantly to the device, it will keep retrying until the connection is succesfull. You can disable the flow to prevent the node from re-connecting.
 
 Due to a limitation on the tuyapi library if a device is not powered anymore the disconnect error message will come around 16 minutes later. This is on the roadmap to be improved for the next mayor release of tuyapi.
