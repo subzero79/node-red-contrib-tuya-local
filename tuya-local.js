@@ -65,7 +65,7 @@ module.exports = function(RED) {
 			dev_info.available = false
 			msg = {data:dev_info}
 			node.send(msg);
-			timeout = setTimeout(connectToDevice, 10000, device, 10, node,'set timeout for re-connect');
+			timeout = setTimeout(connectToDevice, 10000, 10, 'set timeout for re-connect');
 		});
 
 
