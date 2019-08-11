@@ -20,6 +20,18 @@ exit
 docker restart ${nodered-container-name}
 ```
 
+### NodeRED running on official docker image, slim tag versions
+
+```shell
+docker exec -it ${nodered-container-name} bash
+cd /data
+wget https://github.com/subzero79/node-red-contrib-tuya-local/archive/master.zip -O /tmp/master.zip
+unzip /tmp/master.zip -d /tmp
+npm pack /tmp/node-red-contrib-tuya-local
+npm install node-red-contrib-tuya-local-0.0.1.tgz
+exit
+docker restart ${nodered-container-name}
+```
 
 
 ### NodeRED running on nodeenv. Under the username running the nodered instance
