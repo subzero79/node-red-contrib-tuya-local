@@ -1,11 +1,20 @@
 {
   "name": "node-red-contrib-tuya-local",
   "version": "0.0.1",
-  "description": "",
+  "description": "Provides local control of tuya based devices",
   "main": "tuya-local.js",
   "scripts": {
   },
-  "author": "",
+  "repository": {
+  	"type": "git",
+  	"url": "https://github.com/subzero79/node-red-contrib-tuya-local.git"
+  },
+  "keywords": [
+    "node-red",
+    "tuyapi",
+    "tuya"
+  ],
+  "author": "subzero79",
   "license": "MIT",
 	"node-red" : {
         "nodes": {
