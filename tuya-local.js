@@ -6,6 +6,7 @@ module.exports = function(RED) {
 	function TuyaNode(config) {
 		RED.nodes.createNode(this,config);
 		var node = this;
+		var set_timeout = true
 		this.Name = config.devName;
 		this.Id = config.devId;
 		this.Key = config.devKey;
@@ -28,6 +29,11 @@ module.exports = function(RED) {
 					node.status({fill:"red",shape:"ring",text:"failed: " + reason});
 				});
 			});
+		}
+
+		function disconnectDevice(deleted) {
+			set_timeout = deleted ? false : true;
+			device.disconnect();
 		}
 // 
 		function setDevice(req) {
@@ -65,7 +71,9 @@ module.exports = function(RED) {
 			dev_info.available = false
 			msg = {data:dev_info}
 			node.send(msg);
-			timeout = setTimeout(connectToDevice, 10000, 10, 'set timeout for re-connect');
+			if (set_timeout) {
+				timeout = setTimeout(connectToDevice, 10000, 10, 'set timeout for re-connect');
+			}
 		});
 
 
@@ -94,11 +102,22 @@ module.exports = function(RED) {
 			setDevice(msg.payload);
 		});
 
-		this.on('close', function() {
-			if (device.isConnected()) {
-				device.disconnect();
+		// this.on('close', function() {
+		// 	if (device.isConnected()) {
+		// 		device.disconnect();
+		// 	}
+		// });
+		this.on('close', function(removed, done) {
+			if (removed) {
+				  // This node has been deleted
+				device.isConnected() ? disconnectDevice(true) : node.log('not connected');
+			} else {
+				// this node is being restarted
+				device.isConnected() ? disconnectDevice(false) : node.log('not connected');
 			}
+			done();
 		});
+
 
 
 	}
