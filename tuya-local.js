@@ -41,9 +41,9 @@ module.exports = function(RED) {
 				device.get({"schema":true});
 			} else if ( req == "connect" ) {
 				// node.log('Connection requested by input');
-				connectToDevice(10,'Connection requested by input');
+				connectToDevice(10,'Connection requested by input for device: ' + this.Name );
 			} else if ( req == "disconnect" ) {
-				node.log("Disconnection requested by input")
+				node.log("Disconnection requested by input for device: " + this.Name)
 				device.disconnect();
 			} else if (req == "toggle") {
 				device.toggle();
@@ -64,7 +64,9 @@ module.exports = function(RED) {
 			}
 		}
 
-		connectToDevice(10,'Deploy connection request');
+
+		connectToDevice(10,'Deploy connection request for device ' + this.Name);
+
 
 		device.on('disconnected', () => {
 			this.status({fill:"red",shape:"ring",text:"disconnected from device"});
@@ -79,12 +81,25 @@ module.exports = function(RED) {
 
 		device.on('connected', () => {
 			this.status({fill:"green",shape:"dot",text: this.Ip + " at " + getHumanTimeStamp()});
-			clearTimeout(timeout)
+			try	{
+				clearTimeout(timeout)	
+			} catch(e) {
+				node.log("No timeout defined for " + this.Name + ", probably NodeRED starting")
+			}
+			
 		});
 
 		device.on('error', error => {
 			this.status({fill:"red",shape:"ring",text:"error: " + error});
-			node.warn('error ' + error);
+			node.warn(error + " device: " + this.Name);
+			if (error.toString().includes("Error from socket")){
+				try	{
+					node.log("error: Trying to clear a possible timeout timer for device " + this.Name )
+					clearTimeout(timeout)	
+				} catch(e) {
+					node.log("error: No timeout defined, device " + this.Name + " is probably not powered")
+				}
+			}
 		});
 
 		device.on('data', (data,commandByte) => {
@@ -102,24 +117,20 @@ module.exports = function(RED) {
 			setDevice(msg.payload);
 		});
 
-		// this.on('close', function() {
-		// 	if (device.isConnected()) {
-		// 		device.disconnect();
-		// 	}
-		// });
+
 		this.on('close', function(removed, done) {
 			if (removed) {
-				  // This node has been deleted
-				device.isConnected() ? disconnectDevice(true) : node.log('not connected');
+				  // This node has been deleted disconnect device and not set a timeout for reconnection
+				node.log("Node removal, gracefully disconnect device: " + this.Name);
+				device.isConnected() ? disconnectDevice(true) : node.log("Device " + this.Name + "not connected on removal");
 			} else {
-				// this node is being restarted
-				device.isConnected() ? disconnectDevice(false) : node.log('not connected');
+				// this node is being restarted, disconnect the device gracefully or connection will fail. Do not set a timeout
+				node.log("Node de-deploy, gracefully disconnect device: " + this.Name);
+				device.isConnected() ? disconnectDevice(true) : node.log("Device " + this.Name + "not connected on re-deploy");
 			}
 			done();
 		});
-
-
-
+// 
 	}
 	RED.nodes.registerType("tuya-local",TuyaNode);
 }
