@@ -1,5 +1,5 @@
 const TuyaDev = require('tuyapi');
-const {keyRename,getHumanTimeStamp,checkValidJSON} = require('./lib/utils');
+const {keyRename,getHumanTimeStamp,checkValidJSON,filterCommandByte} = require('./lib/utils');
 
 module.exports = function(RED) {
 
@@ -13,6 +13,7 @@ module.exports = function(RED) {
 		this.Ip = config.devIp;
 		this.version = config.protocolVer;
 		this.renameSchema = config.renameSchema;
+		this.filterCB = config.filterCB;
 		const dev_info =  {name:this.Name,ip:this.Ip,id:this.Id};
 		const device = new TuyaDev({
 			id: this.Id,
@@ -109,7 +110,11 @@ module.exports = function(RED) {
 					data.dps = checkValidJSON(this.renameSchema) ? keyRename(data.dps,JSON.parse(this.renameSchema)) : data.dps;
 				}
 				msg = {data:dev_info,commandByte:commandByte,payload:data};
-				node.send(msg);
+				if (this.filterCB !== "") {
+					node.send(filterCommandByte(msg,this.filterCB));
+				} else {
+					node.send(msg);
+				}
 			}
 		});
 
